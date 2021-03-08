@@ -9,12 +9,12 @@ if [[ ${CUSTOM_INIT_IMAGE_TAG} == "" ]]; then
     exit -1
 fi
 
-sed -i "s|initImage.*|initImage: ${CUSTOM_INIT_IMAGE_TAG}|g" ./broker-operator/example/broker_custom_init.yaml
-
-cat ./broker-operator/example/broker_custom_init.yaml
+sed -i "s|initImage.*|initImage: ${CUSTOM_INIT_IMAGE_TAG}|g" ./broker/broker_custom_init.yaml
 
 echo "Deploying broker ..."
 
-$KUBE apply -f ./broker-operator/example/broker_custom_init.yaml
+cat ./broker/broker_custom_init.yaml
+
+$KUBE apply -f ./broker/broker_custom_init.yaml
 
 echo "Done."

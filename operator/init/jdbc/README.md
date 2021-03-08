@@ -34,7 +34,7 @@ There are three sub-directories that contains different kind of resources.
 
 - the **mysql** directory has resources for deploying the database.
 - the **custom-init** directory has resources to build the custom init image.
-- the **broker-operator** directory has resources to deploy the ActiveMQ Artemis broker operator. It also contains a broker custom resource file for creating
+- the **broker** directory contains a broker custom resource file for creating
 a broker pod.
 
 ## Get started
