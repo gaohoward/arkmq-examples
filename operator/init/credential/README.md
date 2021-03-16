@@ -98,7 +98,7 @@ The broker custome resource just deployed will expose the console via ingress. F
 The **ADDRESS** field of the output is the host ip on which the ingress is exposed. 
 Open your browser and go to **http://192.168.99.116** and click on Management Console link to open up the login page. It looks like this:
 
-![The login page](credential-login.png "Management console - login")
+![The login page](https://github.com/artemiscloud/artemiscloud-examples/blob/main/operator/init/credential/credential-login.png?raw=true "Management console - login")
 
 Use **howard/howard** as username/password to log in. Once logged in you will be able to see various manament resources arranged in a tree/table format.
 As we configured the account with some limitations described above, some of the operations are not allowed to execute by the logged in user. To verify just click on the **Artemis/amq-broker** link and then select the **Operations** tab on the top right area and you will get a list of operations. Check on the list and you will find some operations are marked with a **lock** icon which means you don't have permission to perform them. Some others (as configured by the custom init, those whose names begin with **list**/**get**/**is**) are avaiable to use, as shown in the following picture.
