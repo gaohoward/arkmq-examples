@@ -1,0 +1,5 @@
+Run keycloak like
+
+./standalone.sh -Dkeycloak.migration.action=import -Dkeycloak.migration.provider=singleFile -Dkeycloak.migration.file=/keycloak-cfg/artemis-keycloak-demo-realm.json
+
+

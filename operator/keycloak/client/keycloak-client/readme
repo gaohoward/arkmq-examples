@@ -1,0 +1,39 @@
+
+
+Demo contents
+0. About the demo: setup a keycloak server pod and start broker pod configured with keycloak modules.
+   Run java client to connect to broker as user mdoe which has role amq, that have consume right
+   on address 'Info'. Then using console login as user jdoe which has role guest, which
+   has permissions to send messages on address 'Info'
+
+1. Keycloak server pod  (user mdoe/password:[amq], jdoe/password:[guest])
+2. The CR files used (security and broker)
+3. deploy security and broker crs, ingress.
+4. checkout configuration in broker pod
+5. login pod kubectl exec ex-aao-ss-0 -ti -- /bin/bash
+6. create Info::Info queue
+5. run client
+6. send message from console and see client works
+
+
+mkdir -p test-client/src/org/apache/artemis/keycloakclient/; cd test-client/src
+
+vi org/apache/artemis/keycloakclient/KeycloakSecurityExample.java
+
+vi jndi.properties
+
+javac -classpath /opt/amq/lib/client/artemis-jms-client-all-2.18.0-SNAPSHOT.jar org/apache/artemis/keycloakclient/KeycloakSecurityExample.java
+
+java -classpath /opt/amq/lib/client/artemis-jms-client-all-2.18.0-SNAPSHOT.jar:. org.apache.artemis.keycloakclient.KeycloakSecurityExample
+
+kubectl exec ex-aao-ss-0 -ti -- /bin/bash
+cd amq-broker/bin
+./artemis queue create --name Info --user superman --password ihavepower --url tcp://ex-aao-ss-0:61616
+
+go to console 192.168.99.117/console (login with jdoe/password)
+if got redirect error go to 192.168.99.117 admin/admin login keycloak server
+and go to clients-> artemis-console -> Valid Redirect URIs set the value to *
+and refresh console, login form should appear
+
+for some reason the artemis plugin not show up, go to jmx and find the artemis bean
+go to address Info, and send a message, example:

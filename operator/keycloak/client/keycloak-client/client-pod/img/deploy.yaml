@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: broker-client
+  namespace: default
+  labels:
+    app: broker-client-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: broker-client
+  template:
+    metadata:
+      labels:
+        app: broker-client
+    spec:
+      containers:
+      - name: broker-client
+        image: quay.io/hgao/simple-image:amq-client-1
+        imagePullPolicy: Always
