@@ -7,9 +7,11 @@ The ArtemisCould operator provides a security custom resource definition (CRD) t
 
   * JASS login modules for broker and managment console. Currently it supports PropertiesLoginModule, GuestLoginModule and KeycloakLoginModule.
   * Role-based permissions on addresses.
-  * Management console role-based access controls.
+  * Management access control.
 
-This example gives a step-by-step procedure to setup a Keycloak server pod and use it as an authentication server for an ActiveMQ Artemis messaging broker and its management console. It also shows how to configure RBAC based access control for addresses and management console.
+This example gives a step-by-step procedure to setup a Keycloak server pod and use it as an authentication server for an ActiveMQ Artemis messaging broker and its management console. It also shows how to configure RBAC based access control for addresses and management console. It is modeled after Apache ActiveMQ Artemis's keycloak example[1]
+
+[1] https://github.com/apache/activemq-artemis/tree/main/examples/features/standard/security-keycloak
 
 ## Prerequisites
 
@@ -19,8 +21,29 @@ This example gives a step-by-step procedure to setup a Keycloak server pod and u
 
 ## Step 0 Set up the Keycloak server pod
 
-A keycloak image that is configured with some identities used in this example is prepared and available at
-[quay.io](https://quay.io/repository/hgao/keycloak?tab=tags).
+    `$ cd keycloak`
+    `$ ./build_keycloak.sh <quay.io user name> <quay.io repo name>`
+
+The build_keycloak.sh performs the following tasks
+
+* Downloading the keycloak distribution and unzip it
+* Building the keycloak server image
+* Tagging it and push to quay.io
+
+It takes 2 parameters to execute. The first parameter is your quay.io user name
+and the second is your repository name for hosting the keycloak image to build.
+
+For example:
+
+    `./build_keycloak.sh hgao keycloak`
+
+The above command will build the keycloak image and tag it as
+
+quay.io/hgao/keycloak/keycloak:latest
+
+and push it to quay.io.
+
+
 
 Deploy the image to cluser:
 
