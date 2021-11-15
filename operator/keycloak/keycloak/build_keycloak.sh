@@ -27,7 +27,16 @@ fi
 
 #tar xvf keycloak-12.0.3.tar.gz
 
-# docker build -t quay.io/$1/$2:latest .
+#docker build -t quay.io/$1/$2:latest .
 
-docker push quay.io/$1/$2:latest
+#docker push quay.io/$1/$2:latest
+
+sed  's|QUAY_USER|'"$1"'|' keycloak.yaml > keycloak_tmp.yaml
+sed -i 's|QUAY_REPO|'"$2"'|' keycloak_tmp.yaml
+
+cat keycloak_tmp.yaml
+
+kubectl create -f keycloak_tmp.yaml
+
+
 
