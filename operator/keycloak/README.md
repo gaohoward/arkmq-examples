@@ -16,6 +16,7 @@ This example gives a step-by-step procedure to setup a Keycloak server pod and u
 ## Prerequisites
 
 1. Install [Minikube](https://minikube.sigs.k8s.io/docs/) cluster.  You also need kubectl tool.
+2. Enable NGINX ingress controller on Minikube [Enable Ingress](https://kubernetes.io/docs/tasks/access-application-cluster/ingress-minikube/)
 2. Docker tool for building the image in the example.
 3. A [quay.io](https://quay.io) repository for hosting images.
 
@@ -29,29 +30,48 @@ The build_keycloak.sh performs the following tasks
 * Downloading the keycloak distribution and unzip it
 * Building the keycloak server image
 * Tagging it and push to quay.io
+* deploy the keycloak image into Minikube
 
 It takes 2 parameters to execute. The first parameter is your quay.io user name
 and the second is your repository name for hosting the keycloak image to build.
 
 For example:
 
-    `./build_keycloak.sh hgao keycloak`
+    `$ ./build_keycloak.sh hgao keycloak`
 
 The above command will build the keycloak image and tag it as
 
 quay.io/hgao/keycloak/keycloak:latest
 
-and push it to quay.io.
+and push it to quay.io. Then it deploys the keycloak image into Minikube.
+
+If the build_keycloak.sh runs successfully, you will be able to see the Keycloak
+server pod in the Minikube:
+
+    $ kubectl get pod
+    NAME                        READY   STATUS    RESTARTS   AGE
+    keycloak-59f74797d5-qdmdb   1/1     Running   0          63m
+
+At the same time an ingress resource is created so that you can access the admin
+console of keycloak server.
+
+    $ kubectl get ingress
+    NAME               CLASS    HOSTS               ADDRESS          PORTS   AGE
+    keycloak-ingress   <none>   keycloak.3387.com   192.168.39.161   80      64m
+
+The ingress above exposes a host 'keycloak.3387.com' as keycloak admin console's
+host name. To access the admin console with this host name, add it to the local
+/etc/hosts file. i.e. adding the following line to the hosts file.
+
+    192.168.39.161 keycloak.3387.com
+
+Now use your browser to visit http://keycloak.3387.com and click on 'administration
+console', log in as admin/admin.
+
+![The keycloak console](keycloak_console.png "Keycloak Admin Console")
 
 
 
-Deploy the image to cluser:
-
-    `$ kubectl create -f keycloak.yaml`
-
-To be able to access the Keycloak's admin console, deploy an ingress service:
-
-    `$ kubectl create -f ingress.yaml`
 
 Now you can access the admin console of the keycloak server. Go to
 
