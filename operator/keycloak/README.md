@@ -68,147 +68,71 @@ host name. To access the admin console with this host name, add it to the local
 Now use your browser to visit http://keycloak.3387.com and click on 'administration
 console', log in as admin/admin.
 
-![The keycloak console](keycloak_console.png "Keycloak Admin Console")
-
-
-
-
-Now you can access the admin console of the keycloak server. Go to
-
-    `https://<keycloak ingress host>`
-
-and login with admin user account (admin/admin)
+![The keycloak console](keycloak/keycloak_console.png "Keycloak Admin Console")
 
 ## Step 1 Deploy ArtemisCloud operator
 
-First deploy all the needed RBAC and CRDs.
+Go to the base dir and run
 
-    `$ kubectl create -f https://raw.githubusercontent.com/artemiscloud/activemq-artemis-operator/master/deploy/service_account.yaml`
-    `$ kubectl create -f https://raw.githubusercontent.com/artemiscloud/activemq-artemis-operator/master/deploy/role.yaml`
-    `$ kubectl create -f https://raw.githubusercontent.com/artemiscloud/activemq-artemis-operator/master/deploy/role_binding.yaml`
+    `$ ./deploy_operator.sh`
 
-    `$ kubectl create -f https://raw.githubusercontent.com/artemiscloud/activemq-artemis-operator/master/deploy/crds/broker_activemqartemis_crd.yaml`
-    `$ kubectl create -f https://raw.githubusercontent.com/artemiscloud/activemq-artemis-operator/master/deploy/crds/broker_activemqartemisaddress_crd.yaml`
-    `$ kubectl create -f https://raw.githubusercontent.com/artemiscloud/activemq-artemis-operator/master/deploy/crds/broker_activemqartemisscaledown_crd.yaml`
-    `$ kubectl create -f https://raw.githubusercontent.com/artemiscloud/activemq-artemis-operator/master/deploy/crds/broker_activemqartemissecurity_crd.yaml`
+It will deploy all the CRDs and then the operator. Wait and see the operator is up and running.
 
-Then deploy the Operator. Run:
-
-    `$ kubectl create -f https://raw.githubusercontent.com/artemiscloud/activemq-artemis-operator/master/deploy/operator.yaml`
-
-2. Prepare security configuration CR
-
-    `$ kubectl create -f keycloak-module.yaml`
-
-3. Deploy broker cr:
-
-    `$ kubectl create -f test-broker.yaml`
-
-Check that the broker pod is up and running:
-    $ kubectl get pod
-    NAME                                        READY   STATUS    RESTARTS   AGE
-    activemq-artemis-operator-bb9cf6567-5hrtj   1/1     Running   0          13m
-    ex-aao-ss-0                                 1/1     Running   0          4m32s
-    keycloak-557f8b4fd4-b4nkp                   1/1     Running   1          22h
-
-4. Create a queue using configured power user
-
-./artemis queue create --user superman --password ihavepower --name Info --address Info --url tcp://ex-aao-ss-0:61616
-
-5. Deploy and run the java client
-
-The client is a java jms client wrapped in an image. It connects to broker as user mdoe which has role amq, that is configured to have consume right on address 'Info'.
-
-To deploy the client:
-
-    `$ `
-
-
-
-
-You need to pas
-s in your expected tag as an argument to the script.
-For example:
-
-    `$ ./build_custom_init.sh quay.io/hgao/custom-init:broker-mysql-1.0`
-
-The script will build the image, tag it and push it.
-
-The example custom init image will be used in the [broker custom resource file](broker/broker_custom_init.yaml) to configure the broker to use the mysql service as it's persistence store. It copies the jdbc driver jar to broker's lib dir and changes its broker.xml so that it uses database instead of files as data store.
-
-4. Deploy the broker custom resource. Run
-
-    `$ ./deploy_broker_cr.sh <custom init tag>`
-
-It needs the custom init tag built earlier as it's argument. For example
-
-    `$ ./deploy_broker_cr.sh quay.io/hgao/custom-init:broker-mysql-1.0`
-
-The script deploys the broker custom resource **./broker/broker_custom_init.yaml** which uses the custom init image for broker jdbc storage configuration.
-
-Verify that the broker pod is up and running. For example
-
-    $ kubectl get pod
+    `$ kubectl get pod`
     NAME                                         READY   STATUS    RESTARTS   AGE
-    activemq-artemis-operator-7b64475997-r6hls   1/1     Running   0          31m
-    ex-aao-ss-0                                  1/1     Running   0          8m1s
-    mysql-deployment-c67646cd4-qvxc2             1/1     Running   0          42m
+    activemq-artemis-operator-5f84687b46-tv957   1/1     Running   0          64m
+    keycloak-59f74797d5-qdmdb                    1/1     Running   0          7h12m
 
-Verify that tables are created in mysql. You can log in to mysql pod's shell and do query, for example:
+## Step 2 Deploy the broker secured by KeycloakLoginModules
 
-    $ kubectl exec mysql-deployment-c67646cd4-qvxc2 -ti -- /bin/bash
+Go to the sub-directory **broker** and run
 
-    # mysql -uroot -ppassword amq_broker
-    mysql> show tables;
-    +----------------------+
-    | Tables_in_amq_broker |
-    +----------------------+
-    | bindings             |
-    | large_messages       |
-    | messages             |
-    | page_store           |
-    +----------------------+
-    4 rows in set (0.00 sec)
+    `$ ./deploy_broker.sh`
 
-5. Send some messages
+It deploys a [security CR](./keycloak-module.yaml) and a broker pod.
+The security CR configures the broker with keycloak modules described at
+[the Artemis Example](https://github.com/apache/activemq-artemis/tree/2.18.0/examples/features/standard/security-keycloak)
 
-To verify that messages are actually stored in database. Now use broker's cli tool to send a few messages.
+Wait and see the broker pod is up and running:
 
-    $ kubectl exec ex-aao-ss-0 -- /bin/bash -c "/home/jboss/amq-broker/bin/artemis producer \
-      --user guest --password guest --url tcp://ex-aao-ss-0:61616 --message-count 100"
+    `$ kubectl get pod`
+    NAME                                         READY   STATUS    RESTARTS   AGE
+    activemq-artemis-operator-5f84687b46-tv957   1/1     Running   0          4h16m
+    ex-aao-ss-0                                  1/1     Running   0          140m
+    keycloak-59f74797d5-qdmdb                    1/1     Running   0          10h
 
-    amq-broker/bin/artemis producer --user guest --password guest --url tcp://ex-aao-ss-0:61616 --message-count 100
-    OpenJDK 64-Bit Server VM warning: If the number of processors is expected to increase from one, then you should configure the number of parallel GC threads appropriately using -XX:ParallelGCThreads=N
-    Connection brokerURL = tcp://ex-aao-ss-0:61616
-    Producer ActiveMQQueue[TEST], thread=0 Started to calculate elapsed time ...
+It also deploys an ingress that exposes the broker's management console.
 
-    Producer ActiveMQQueue[TEST], thread=0 Produced: 100 messages
-    Producer ActiveMQQueue[TEST], thread=0 Elapsed time in second : 1 s
-    Producer ActiveMQQueue[TEST], thread=0 Elapsed time in milli second : 1886 milli seconds
+    `$ kubectl get ingress console-ingress`
+    NAME              CLASS    HOSTS                 ADDRESS          PORTS   AGE
+    console-ingress   <none>   www.mgmtconsole.com   192.168.39.161   80      150m
 
-6. Verify the message records in mysql pod
+To allow you to access the management console via the ingress, you need to add the
+host www.mgmtconsole.com to /etc/hosts like that:
 
-Now login to mysql pod.
+    192.168.39.161 www.mgmtconsole.com
 
-    $ kubectl exec mysql-deployment-c67646cd4-qvxc2 -ti -- /bin/bash
+**Note**
 
-    $ mysql -uroot -ppassword amq_broker
-    (log in messages omitted)
+If you open the admin console url **http://www.mgmtconsole.com** and click on
+**managment console**, it will redirect you to keycloak's login form. However
+you may get errors from keycloak and the login form won't show up.
 
-    mysql> select count(*) from messages;
-    +----------+
-    | count(*) |
-    +----------+
-    |      200 |
-    +----------+
-    1 row in set (0.00 sec)
+To fix that you need go to the keycloak's admin console home page, click the
+**client** on the left panel and on the right panel:
 
-As you can see there are internal records in the messages table.
+* select **artemis-console**
+* set **valid redirect URIs** to *
+* select **Web Origins** to *
 
-7. Cleaning up
+and finally click the **save** button.
 
-To clean up the example run the following scripts in order:
+![The Keycloak Setting](keycloak/keycloak_setting.png "Keycloak Settings")
 
-    $ ./undeploy_broker_cr.sh
-    $ ../undeploy_broker_operator.sh
-    $ ./undeploy_mysql.sh
+Now go to broker's admin console and login as jdoe/password.
+
+![The Login Form](broker/login_form.png "Login Form")
+
+You shall be able to see the console's home page
+
+![The admin console](broker/admin_console.png "Artemis Admin Console")
