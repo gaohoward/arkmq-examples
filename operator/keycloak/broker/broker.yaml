@@ -6,6 +6,7 @@ spec:
   deploymentPlan:
     size: 1
     image: placeholder
+    initImage: quay.io/hgao/init-container:u2.10.keycloak
 
 ---
 apiVersion: networking.k8s.io/v1

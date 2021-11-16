@@ -65,6 +65,23 @@ spec:
         - operationType: 'consume'
           roles:
           - 'amq'
+      - match: 'activemq.management.#'
+        permissions:
+        - operationType: 'createNonDurableQueue'
+          roles:
+          - 'amq'
+        - operationType: 'createAddress'
+          roles:
+          - 'amq'
+        - operationType: 'consume'
+          roles:
+          - 'amq'
+        - operationType: 'manage'
+          roles:
+          - 'amq'
+        - operationType: 'send'
+          roles:
+          - 'amq'
     management:
       hawtioRoles:
       - 'guest'
