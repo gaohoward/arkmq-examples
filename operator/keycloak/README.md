@@ -9,7 +9,7 @@ The ArtemisCould operator provides a security custom resource definition (CRD) t
   * Role-based permissions on addresses.
   * Management access control.
 
-This example gives a step-by-step procedure to setup a Keycloak server pod and use it as an authentication server for an ActiveMQ Artemis messaging broker and its management console. It also shows how to configure RBAC based access control for addresses and management console. It is modeled after Apache ActiveMQ Artemis's keycloak example[1]
+This example gives a step-by-step procedure to setup a Keycloak server pod and use it as an authentication server for an ActiveMQ Artemis messaging broker and its management console. It also shows how to configure RBAC based access control for addresses. It is modeled after Apache ActiveMQ Artemis's keycloak example[1]
 
 [1] https://github.com/apache/activemq-artemis/tree/main/examples/features/standard/security-keycloak
 
@@ -23,7 +23,7 @@ This example gives a step-by-step procedure to setup a Keycloak server pod and u
 ## Step 0 Set up the Keycloak server pod
 
     `$ cd keycloak`
-    `$ ./build_keycloak.sh <quay.io user name> <quay.io repo name>`
+    `$ ./deploy_keycloak.sh <quay.io user name> <quay.io repo name>`
 
 The build_keycloak.sh performs the following tasks
 
@@ -45,8 +45,7 @@ quay.io/hgao/keycloak/keycloak:latest
 
 and push it to quay.io. Then it deploys the keycloak image into Minikube.
 
-If the build_keycloak.sh runs successfully, you will be able to see the Keycloak
-server pod in the Minikube:
+If the deploy_keycloak.sh runs successfully, you will be able to see the Keycloak server pod in the Minikube:
 
     $ kubectl get pod
     NAME                        READY   STATUS    RESTARTS   AGE
@@ -174,7 +173,10 @@ Log into the broker pod
 
 and run the CLI to create queue
 
-    `./artemis queue create --name Info --address Info --durable --anycast --purge-on-no-consumers false --auto-create-address --user mdoe --password password --url tcp://ex-aao-ss-0:61616`
+    `[jboss@ex-aao-ss-0 ~]$ ./amq-broker/bin/artemis queue create --name Info --address Info --durable --anycast --silent --auto-create-address --user mdoe --password password --url tcp://ex-aao-ss-0:61616`
+    Connection brokerURL = tcp://ex-aao-ss-0:61616
+    Queue [name=Info, address=Info, routingType=ANYCAST, durable=true, purgeOnNoConsumers=false, autoCreateAddress=false, exclusive=false, lastValue=false, lastValueKey=null, nonDestructive=false, consumersBeforeDispatch=0, delayBeforeDispatch=-1, autoCreateAddress=false] created successfully.
+    [jboss@ex-aao-ss-0 ~]$ exit
 
 Next log into management console using account **jdoe/password**, navigate to queue **Info** and execute the operation sendMessage on it to send a message, like shown in the following screenshot
 
@@ -182,7 +184,7 @@ Next log into management console using account **jdoe/password**, navigate to qu
 
 Log into the broker pod again and receive the message using account **mdoe/password**
 
-    `jboss@ex-aao-ss-0 bin]$ ./artemis consumer --destination queue://Info --message-count 1 --user mdoe --password password --url tcp://ex-aao-ss-0:61616`
+    `jboss@ex-aao-ss-0 ~]$ ./amq-broker/bin/artemis consumer --destination queue://Info --message-count 1 --user mdoe --password password --url tcp://ex-aao-ss-0:61616`
     Connection brokerURL = tcp://ex-aao-ss-0:61616
     Consumer:: filter = null
     Consumer ActiveMQQueue[Info], thread=0 wait until 1 messages are consumed
@@ -191,4 +193,4 @@ Log into the broker pod again and receive the message using account **mdoe/passw
     Consumer ActiveMQQueue[Info], thread=0 Elapsed time in milli second : 14 milli seconds
     Consumer ActiveMQQueue[Info], thread=0 Consumed: 1 messages
     Consumer ActiveMQQueue[Info], thread=0 Consumer thread finished
-    jboss@ex-aao-ss-0 bin]$ exit
+    jboss@ex-aao-ss-0 ~]$ exit
