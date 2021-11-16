@@ -70,6 +70,13 @@ console', log in as admin/admin.
 
 ![The keycloak console](keycloak/keycloak_console.png "Keycloak Admin Console")
 
+The keycloak server has pre-configured with two users
+
+| User name  | Password | Role  |
+| -----------| ---------|-------|
+| jdoe       | password | guest |
+| mdoe       | password | amq   |
+
 ## Step 1 Deploy ArtemisCloud operator
 
 Go to the base dir and run
@@ -125,7 +132,7 @@ To fix that you need go to the keycloak's admin console home page, click the
 * set **valid redirect URIs** to *
 * select **Web Origins** to *
 
-and finally click the **save** button.
+and finally click the **save** button. (You need to repeat this step if your keycloak pod is restarted, as it is not persisted)
 
 ![The Keycloak Setting](keycloak/keycloak_setting.png "Keycloak Settings")
 
@@ -136,3 +143,33 @@ Now go to broker's admin console and login as jdoe/password.
 You shall be able to see the console's home page
 
 ![The admin console](broker/admin_console.png "Artemis Admin Console")
+
+## Step 3 Test sending and receiving
+
+First we need to create a queue named **Info**. We will use user
+**mdoe/password** as it has proper permissions to create queues.
+
+Log into the broker pod
+
+    `kubectl exec ex-aao-ss-0 -ti -- /bin/bash`
+
+and run the CLI to create queue
+
+    `./artemis queue create --name Info --address Info --durable --anycast --purge-on-no-consumers false --auto-create-address --user mdoe --password password --url tcp://ex-aao-ss-0:61616`
+
+Next log into management console using account **jdoe/password**, navigate to queue **Info** and execute the operation sendMessage on it to send a message, like shown in the following screenshot
+
+![SendMessage](broker/send_message.png "Sending a message")
+
+Log into the broker pod again and receive the message using account **mdoe/password**
+
+    `jboss@ex-aao-ss-0 bin]$ ./artemis consumer --destination queue://Info --message-count 1 --user mdoe --password password --url tcp://ex-aao-ss-0:61616`
+    Connection brokerURL = tcp://ex-aao-ss-0:61616
+    Consumer:: filter = null
+    Consumer ActiveMQQueue[Info], thread=0 wait until 1 messages are consumed
+    Consumer ActiveMQQueue[Info], thread=0 Consumed: 1 messages
+    Consumer ActiveMQQueue[Info], thread=0 Elapsed time in second : 0 s
+    Consumer ActiveMQQueue[Info], thread=0 Elapsed time in milli second : 14 milli seconds
+    Consumer ActiveMQQueue[Info], thread=0 Consumed: 1 messages
+    Consumer ActiveMQQueue[Info], thread=0 Consumer thread finished
+    jboss@ex-aao-ss-0 bin]$ exit
