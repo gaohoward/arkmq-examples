@@ -144,6 +144,25 @@ You shall be able to see the console's home page
 
 ![The admin console](broker/admin_console.png "Artemis Admin Console")
 
+The security CR gives some permissions to user **mdoe** and **jdoe** on address **Info** based on their roles. (It also configures some extra permissions on managment address in
+order to create the Info queue), summarized as follows:
+
+Permissions of user **jdoe** with role **guest** on addresses:
+
+| Info| activemq.management.# |
+| -----|------|
+| send |No permissions|
+
+Permissions of user **mdoe** with role **amq** on addresses:
+
+| Info    | activemq.management.# |
+| ------- | --------------------- |
+| consume | consume |
+| createDurableQueue | createAddress |
+| deleteDurableQueue | createNonDurableQueue |
+| createNonDurableQueue | manage |
+| deleteNonDurableQueue | send |
+
 ## Step 3 Test sending and receiving
 
 First we need to create a queue named **Info**. We will use user
