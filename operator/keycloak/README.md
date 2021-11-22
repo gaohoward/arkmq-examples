@@ -16,6 +16,7 @@ This example gives a step-by-step procedure to setup a Keycloak server pod and u
 ## Prerequisites
 
 1. Install [Minikube](https://minikube.sigs.k8s.io/docs/) cluster.  You also need kubectl tool.
+   (Note the operator currently works with Minikube v1.21.0)
 2. Enable NGINX ingress controller on Minikube [Enable Ingress](https://kubernetes.io/docs/tasks/access-application-cluster/ingress-minikube/)
 2. Docker tool for building the image in the example.
 3. A [quay.io](https://quay.io) repository for hosting images.
