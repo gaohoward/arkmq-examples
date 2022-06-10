@@ -24,7 +24,7 @@ if [ ${params_ready} = "false" ]
     exit 1
 fi
 
-wget https://github.com/keycloak/keycloak/releases/download/12.0.3/keycloak-12.0.3.tar.gz
+wget https://github.com/keycloak/keycloak/releases/download/18.0.0/keycloak-18.0.0.tar.gz
 
 tar xvf keycloak-12.0.3.tar.gz
 
