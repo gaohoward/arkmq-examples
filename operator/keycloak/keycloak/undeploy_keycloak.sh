@@ -2,10 +2,11 @@
 
 source ../../setup_env.sh
 
-rm keycloak-12.0.3.tar.gz
+rm keycloak-*.tar.gz
 
-rm -r keycloak-18.0.0
+rm -rf keycloak
 
 ${KUBE_CLI} delete -f keycloak_tmp.yaml
 
 rm keycloak_tmp.yaml
+

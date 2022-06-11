@@ -10,6 +10,6 @@ ENV PATH="$JAVA_HOME/bin:${PATH}"
 
 FROM java8base
 
-ADD keycloak-12.0.3 /keycloak/12.0.3
+ADD keycloak /keycloak
 ADD cfg /keycloak-cfg
 
