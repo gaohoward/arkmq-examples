@@ -1,5 +1,5 @@
 #!/bin/bash
-export OPERATOR_VERSION=v1.0.4
+export OPERATOR_VERSION=v1.0.6
 
 if command -v kubectl &> /dev/null
 then

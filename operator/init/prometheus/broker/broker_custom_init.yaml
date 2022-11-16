@@ -1,0 +1,10 @@
+apiVersion: broker.amq.io/v1beta1
+kind: ActiveMQArtemis
+metadata:
+  name: ex-aao
+spec:
+  deploymentPlan:
+    size: 1
+    enableMetricsPlugin: true
+    image: quay.io/artemiscloud/activemq-artemis-broker-kubernetes:1.0.9
+    initImage: quay.io/hgao/custom-init:broker-prometheus-1.1.0
