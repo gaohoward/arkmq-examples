@@ -3,6 +3,7 @@
 source ../../setup_env.sh
 
 TARGET_NAMESPACE=${PROMETHEUS_NAMESPACE:-default}
+INSTALL_PROMETHEUS=${INSTALL_PROMETHEUS:-true}
 
 if [[ ${KUBE_CLI} == "kubectl" && ${INSTALL_PROMETHEUS} == "true" ]]; then
   # assuming k8s, install prometheus operator

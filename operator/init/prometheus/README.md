@@ -25,6 +25,8 @@ they can just provide their own custom init image in the custom resource file. D
 
 4. You need a container registry (e.g. [quay.io](https://quay.io) to push your custom init image to and pull it from.
 
+5. Java JDK version 11.
+
 ## Example structure
 
 In the current directory there are a few scripts to help you build and run this example and
@@ -38,92 +40,47 @@ there are three sub-directories that contains different kind of resources.
 
 1. Build the custom init image
 
-    `$ ./build_custom_init.sh`
+    `$ ./build_custom_init.sh` <image tag>
 
-The script deploys a **mysql** server and expose it as a service. It also creates a database called "**amq_broker**" which will be used by the broker as its persistence store. The root password is set to be "**password**".
+It will download the plugin and build it locally. Then it goes on to build the custom init image
+and pushes it to registry.
 
-Verify that the mysql pod is up and running. Run
+You need to give a valid image tag as an argument to the script.
+For example:
 
-    $ kubectl get pod
-    NAME                               READY   STATUS    RESTARTS   AGE
-    mysql-deployment-c67646cd4-qvxc2   1/1     Running   0          7s
+    `$ ./build_custom_init.sh quay.io/hgao/custom-init:1.1.0`
 
-Verify that mysql server has an empty '**amq_broker**' database created. For example you can get into mysql pod's shell and query with mysql tool:
-
-    mysql> show databases;
-    +--------------------+
-    | Database           |
-    +--------------------+
-    | information_schema |
-    | amq_broker         |
-    | mysql              |
-    | performance_schema |
-    | sys                |
-    +--------------------+
-    5 rows in set (0.00 sec)
-
-
-2. Deploy the Operator. Run:
+2. Deploy the ArtemisCloud Operator. Run:
 
     `$ ../../deploy_operator.sh`
-
-The script sets up proper service account and permissions for the broker operator and deploys the operator.
 
 Verify that the operator is up and running. For example
 
     $ kubectl get pod
-    NAME                                         READY   STATUS    RESTARTS   AGE
-    activemq-artemis-operator-7b64475997-r6hls   1/1     Running   0          76s
-    mysql-deployment-c67646cd4-qvxc2             1/1     Running   0          12m
+    NAME                                                   READY   STATUS    RESTARTS   AGE
+    activemq-artemis-controller-manager-6b6896f78b-9bscf   1/1     Running   0          4m58s
 
-3. Build the custom init image. Run:
-
-    `$ ./build_custom_init.sh <tag>`
-
-You need to pass in your expected tag as an argument to the script.
-For example:
-
-    `$ ./build_custom_init.sh quay.io/hgao/custom-init:broker-mysql-1.0`
-
-The script will build the image, tag it and push it.
-
-The example custom init image will be used in the [broker custom resource file](broker/broker_custom_init.yaml) to configure the broker to use the mysql service as it's persistence store. It copies the jdbc driver jar to broker's lib dir and changes its broker.xml so that it uses database instead of files as data store.
-
-4. Deploy the broker custom resource. Run
+3. Deploy the broker custom resource. Run
 
     `$ ./deploy_broker_cr.sh <custom init tag>`
 
 It needs the custom init tag built earlier as it's argument. For example
 
-    `$ ./deploy_broker_cr.sh quay.io/hgao/custom-init:broker-mysql-1.0`
+    `$ ./deploy_broker_cr.sh quay.io/hgao/custom-init:1.1.0`
 
-The script deploys the broker custom resource **./broker/broker_custom_init.yaml** which uses the custom init image for broker jdbc storage configuration.
+The script deploys the broker custom resource **./broker/broker_custom_init.yaml**.
 
 Verify that the broker pod is up and running. For example
 
     $ kubectl get pod
-    NAME                                         READY   STATUS    RESTARTS   AGE
-    activemq-artemis-operator-7b64475997-r6hls   1/1     Running   0          31m
-    ex-aao-ss-0                                  1/1     Running   0          8m1s
-    mysql-deployment-c67646cd4-qvxc2             1/1     Running   0          42m
+    NAME                                                   READY   STATUS    RESTARTS   AGE
+    activemq-artemis-controller-manager-6b6896f78b-9bscf   1/1     Running   0          8m32s
+    ex-aao-ss-0                                            1/1     Running   0          14s
 
-Verify that tables are created in mysql. You can log in to mysql pod's shell and do query, for example:
+4. Deploy Prometheus service.
 
-    $ kubectl exec mysql-deployment-c67646cd4-qvxc2 -ti -- /bin/bash
 
-    # mysql -uroot -ppassword amq_broker
-    mysql> show tables;
-    +----------------------+
-    | Tables_in_amq_broker |
-    +----------------------+
-    | bindings             |
-    | large_messages       |
-    | messages             |
-    | page_store           |
-    +----------------------+
-    4 rows in set (0.00 sec)
 
-5. Send some messages
 
 To verify that messages are actually stored in database. Now use broker's cli tool to send a few messages.
 
