@@ -1,11 +1,12 @@
-# ArtemisCloud Operator Custom Init Image Example - JDBC
+# ArtemisCloud Operator Custom Init Image Example - Prometheus Plugin
 
-This example demonstrates how to use custom init image to configure
-a broker instance deployed by [ActiveMQ Artemis broker operator](https://github.com/artemiscloud/activemq-artemis-operator) to run in a kubernetes/openshift cluster.
+This example demonstrates how to use [Prometheus Operator](https://github.com/prometheus-operator/prometheus-operator) to collect
+metrics from brokers deployed by the artemiscloud operator.
 
-It configures a broker instance that uses [mysql](https://www.mysql.com/) database as it's persistence store.
+Note: The example requires [Artemis Prometheus Metrics Plugin](https://github.com/rh-messaging/artemis-prometheus-metrics-plugin).
+As the standard ActiveMQ Artemis distribution isn't shipped with it we use custom init image to install and configure it into the broker.
 
-This example should not be used in real productization environment.
+This example is for demonstration purpose only and is not intended to be used in a real productization environment.
 
 ## About ArtemisCloud Broker Operator Custom Init Image
 
@@ -26,19 +27,18 @@ they can just provide their own custom init image in the custom resource file. D
 
 ## Example structure
 
-In the current directory there are a few scripts to help you build and run this example.
+In the current directory there are a few scripts to help you build and run this example and
+there are three sub-directories that contains different kind of resources.
 
-There are three sub-directories that contains different kind of resources.
-
-- the **mysql** directory has resources for deploying the database.
+- the **broker** directory has resources for deploying the broker.
 - the **custom-init** directory has resources to build the custom init image.
-- the **broker** directory contains a broker custom resource file for creating a broker pod with the init image.
+- the **prometheus** directory contains resources needed to deploy a prometheus pod.
 
 ## Get started
 
-1. Deploy the **mysql** database. Run:
+1. Build the custom init image
 
-    `$ ./deploy_mysql.sh`
+    `$ ./build_custom_init.sh`
 
 The script deploys a **mysql** server and expose it as a service. It also creates a database called "**amq_broker**" which will be used by the broker as its persistence store. The root password is set to be "**password**".
 
