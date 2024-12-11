@@ -4,7 +4,7 @@ BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 source ${BASEDIR}/setup_env.sh
 
-BASE_URL="https://raw.githubusercontent.com/artemiscloud/activemq-artemis-operator/${OPERATOR_VERSION}/deploy"
+BASE_URL="https://raw.githubusercontent.com/arkmq-org/activemq-artemis-operator/${OPERATOR_VERSION}/deploy"
 
 ${KUBE_CLI} create -f ${BASE_URL}/crds/broker_activemqartemis_crd.yaml
 ${KUBE_CLI} create -f ${BASE_URL}/crds/broker_activemqartemissecurity_crd.yaml

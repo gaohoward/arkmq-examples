@@ -1,15 +1,15 @@
-# ArtemisCloud Operator Custom Init Image Example - JDBC
+# ActiveMQ Artemis Operator Custom Init Image Example - JDBC
 
 This example demonstrates how to use custom init image to configure
-a broker instance deployed by [ActiveMQ Artemis broker operator](https://github.com/artemiscloud/activemq-artemis-operator) to run in a kubernetes/openshift cluster.
+a broker instance deployed by [ActiveMQ Artemis broker operator](https://github.com/arkmq-org/activemq-artemis-operator) to run in a kubernetes/openshift cluster.
 
 It configures a broker instance that uses [mysql](https://www.mysql.com/) database as it's persistence store.
 
 This example should not be used in real productization environment.
 
-## About ArtemisCloud Broker Operator Custom Init Image
+## About ActiveMQ Artemis Operator Custom Init Image
 
-Users can configure ActiveMQ Artemis Broker via custom resources ([examples](https://github.com/artemiscloud/activemq-artemis-operator/tree/master/deploy/examples)). The available configuration parameters are defined in CRD files.
+Users can configure ActiveMQ Artemis Broker via custom resources ([examples](https://github.com/arkmq-org/activemq-artemis-operator/tree/master/deploy/examples)). The available configuration parameters are defined in CRD files.
 
 In cases where users need some peculiar aspects of configuration that may be out of scope of CRD definitions,
 they can just provide their own custom init image in the custom resource file. During deployment the operator installs the custom init image in broker's init container so it runs before the broker starts. The custom init image's config script will be called so it can adjust the broker configuration as needed.

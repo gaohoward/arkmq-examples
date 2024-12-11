@@ -1,11 +1,11 @@
-# ArtemisCloud Operator Security Configuration Example - Keycloak Integration
+# ActiveMQ Artemis Operator Security Configuration Example - Keycloak Integration
 
 This example demonstrates how to configure security for
-an ActiveMQ Artemis broker deployed by [ArtemisCloud operator](https://github.com/artemiscloud/activemq-artemis-operator) to run in a kubernetes/openshift cluster using security custom resources.
+an ActiveMQ Artemis broker deployed by [arkmq-org operator](https://github.com/arkmq-org/activemq-artemis-operator) to run in a kubernetes/openshift cluster using security custom resources.
 
 The ArtemisCould operator provides a security custom resource definition (CRD) that allows users to configure security for a broker, including
 
-  * JASS login modules for broker and managment console. Currently it supports PropertiesLoginModule, GuestLoginModule and KeycloakLoginModule.
+  * JAAS login modules for broker and management console. Currently it supports PropertiesLoginModule, GuestLoginModule and KeycloakLoginModule.
   * Role-based permissions on addresses.
   * Management access control.
 
@@ -76,7 +76,7 @@ The keycloak server has pre-configured with two users
 | jdoe       | password | guest |
 | mdoe       | password | amq   |
 
-## Step 1 Deploy ArtemisCloud operator
+## Step 1 Deploy the operator
 
 From the keycloak example dir run
 

@@ -11,10 +11,10 @@ metadata:
     openshift.io/display-name: ActiveMQ Artemis Broker 2.17 (Persistence, no SSL)
     openshift.io/provider-display-name: Apache Artemis
     tags: messaging,amq,xpaas
-    template.openshift.io/documentation-url: 'https://github.com/artemiscloud/activemq-artemis-broker-openshift-image'
+    template.openshift.io/documentation-url: 'https://github.com/arkmq-org/activemq-artemis-broker-openshift-image'
     template.openshift.io/long-description: >-
       This template defines resources needed to develop a ActiveMQ Artemis Broker 2.17 based application, including a statefulset configuration, using persistent storage.
-    template.openshift.io/support-url: 'https://github.com/artemiscloud'
+    template.openshift.io/support-url: 'https://github.com/arkmq-org'
     version: '1.0'
   name: activemq-artemis-persistence
 objects:
@@ -274,7 +274,7 @@ parameters:
   displayName: Image
   name: IMAGE
   required: true
-  value: quay.io/artemiscloud/activemq-artemis-broker-kubernetes:0.2.2
+  value: quay.io/arkmq-org/activemq-artemis-broker-kubernetes:0.2.2
 - description: Name of a secret containing credential data such as usernames and passwords
   displayName: Secret Name
   name: AMQ_CREDENTIAL_SECRET

@@ -8,7 +8,7 @@
 ##
 ## - Operator deployment
 ##
-## By default the script uses the latest tag on artemiscloud respository
+## By default the script uses the latest tag on arkmq-org respository
 ## to install the operator (i.e. in deploy/install dir)
 ## If you want to use a specific commit/tag you can define the env variable
 ## OPERATOR_VERSION to override the default.
@@ -18,13 +18,13 @@
 ##
 ## By default the script uses the image specified in the operator yaml in deploy/install
 ## dir at the OPERATOR_VERSION source tag. To use a different Operator
-## image, define the OPR_IMG_TAG (for example `export OPR_IMG_TAG=quay.io/artemiscloud/activemq-artemis-operator:dev.latest`)
+## image, define the OPR_IMG_TAG (for example `export OPR_IMG_TAG=quay.io/arkmq-org/activemq-artemis-operator:dev.latest`)
 ##
 ## - Broker image
 ##
 ## By default the broker image uses the latest tag specified in the operator yaml
 ## To use a different image you can define the BROKER_TAG env var
-## (for example `export BROKER_TAG=quay.io/artemiscloud/activemq-artemis-broker-kubernetes:dev.latest`)
+## (for example `export BROKER_TAG=quay.io/arkmq-org/activemq-artemis-broker-kubernetes:dev.latest`)
 ##
 ## - Init image
 ##
@@ -40,7 +40,7 @@ function find_broker_image_tag {
   opr_ver=$1
   img_type=$2
 
-  opr_yaml_url=https://raw.githubusercontent.com/artemiscloud/activemq-artemis-operator/${opr_ver}/config/manager/manager.yaml
+  opr_yaml_url=https://raw.githubusercontent.com/arkmq-org/activemq-artemis-operator/${opr_ver}/config/manager/manager.yaml
 
   raw_opr_yaml="$(curl ${opr_yaml_url} 2>/dev/null)"
 
@@ -69,9 +69,9 @@ function find_broker_image_tag {
   echo "$last_found_img"
 }
 
-ARTEMISCLOUD_REPO=https://github.com/artemiscloud/activemq-artemis-operator.git
+ARKMQ_ORG_REPO=https://github.com/arkmq-org/activemq-artemis-operator.git
 
-LATEST_TAG=$(git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags ${ARTEMISCLOUD_REPO} '*.*.*' | tail --lines=1 | cut --delimiter='/' --fields=3)
+LATEST_TAG=$(git -c 'versionsort.suffix=-' ls-remote --exit-code --refs --sort='version:refname' --tags ${ARKMQ_ORG_REPO} '*.*.*' | tail --lines=1 | cut --delimiter='/' --fields=3)
 
 export OPERATOR_VERSION=${OPERATOR_VERSION:-${LATEST_TAG}}
 echo "Using operator version ${OPERATOR_VERSION}"

@@ -1,7 +1,7 @@
-# ArtemisCloud Operator Example - Prometheus Plugin
+# ActiveMQ Artemis Operator Example - Prometheus Plugin
 
 This example demonstrates how to use [Prometheus Operator](https://github.com/prometheus-operator/prometheus-operator) to collect
-metrics from brokers deployed by the artemiscloud operator.
+metrics from brokers deployed by the operator.
 
 This example is for demonstration purpose only and is not intended to be used in a real productization environment.
 
@@ -20,7 +20,7 @@ there are three sub-directories that contains different kind of resources.
 
 ## Get started
 
-1. Deploy the ArtemisCloud Operator. Run:
+1. Deploy the operator. Run:
 
     `$ ../deploy_operator.sh`
 

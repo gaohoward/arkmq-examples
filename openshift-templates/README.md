@@ -1,6 +1,6 @@
-# ArtemisCloud OpenShift Template Examples
+# Arkmq-org OpenShift Template Examples
 
-This dir contains the following ArtemisCloud OpenShift template examples.
+This dir contains the following Arkmq-org OpenShift template examples.
 
 * activemq-artemis-basic.yaml
 * activemq-artemis-custom.yaml
